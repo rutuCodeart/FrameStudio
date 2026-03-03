@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio X | Cinematic 3D Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;600;900&display=swap');
+
+        :root { --accent: #facc15; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #050505;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        canvas#vertex-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .font-sync { font-family: 'Syncopate', sans-serif; }
+
+        #cursor {
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+        }
+
+        nav {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        section {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10vh 5vw;
+            position: relative;
+        }
+
+        /* --- Cinematic Typographic Styles --- */
+        .line-container {
+            display: block;
+            perspective: 1000px;
+            overflow: visible;
+            padding: 10px 0;
+        }
+        
+        .char {
+            display: inline-block;
+            will-change: transform, filter, opacity;
+            transform-style: preserve-3d;
+        }
+
+        .anim-line {
+            display: block;
+            will-change: letter-spacing;
+        }
+
+        /* --- Project Card Enhancements --- */
+        .project-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-15px);
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .team-img {
+            filter: grayscale(100%);
+            transition: 0.5s;
+        }
+
+        .team-member:hover .team-img {
+            filter: grayscale(0%);
+            transform: scale(1.1);
+        }
+
+        .reveal { opacity: 0; transform: translateY(40px); }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <canvas id="vertex-canvas"></canvas>
+    <div id="cursor"></div>
+
+    <nav class="fixed top-0 w-full p-6 flex justify-between items-center z-50">
+        <div class="font-sync text-2xl font-bold tracking-tighter">STUDIO<span class="text-yellow-400">X</span></div>
+        <div class="hidden md:flex space-x-10 text-[11px] font-bold uppercase tracking-[0.3em]">
+            <a href="#home" class="hover:text-yellow-400 transition-all duration-300">Home</a>
+            <a href="#portfolio" class="hover:text-yellow-400 transition-all duration-300">Portfolio</a>
+            <a href="#team" class="hover:text-yellow-400 transition-all duration-300">Our Team</a>
+            <a href="#contact" class="px-6 py-2 bg-yellow-400 text-black rounded-full hover:bg-white transition-all duration-300">Hire Us</a>
+        </div>
+    </nav>
+
+    <!-- SECTION 1: HOME -->
+    <section id="home">
+        <div class="text-center z-10">
+            <h1 class="hero-title text-[9vw] font-black leading-[0.85] font-sync tracking-tighter uppercase">
+                <span class="line-container">
+                    <span class="anim-line block">STUDIO</span>
+                </span>
+                <span class="line-container">
+                    <span class="anim-line block text-transparent" style="-webkit-text-stroke: 1.5px #facc15;">FrameX</span>
+                </span>
+            </h1>
+            <p class="hero-sub mt-8 text-yellow-400 tracking-[1em] uppercase text-[10px] opacity-0">Visualizing the Unreal</p>
+        </div>
+    </section>
+
+    <!-- SECTION 2: PORTFOLIO (Expanded with more works) -->
+    <section id="portfolio" class="flex-col !h-auto">
+        <div class="w-full max-w-7xl py-20">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-6">
+                <h2 class="reveal text-5xl md:text-7xl font-sync border-l-8 border-yellow-400 pl-6 uppercase leading-none">Selected<br>Works</h2>
+                <p class="reveal text-gray-500 max-w-sm text-sm uppercase tracking-widest leading-relaxed">A collection of digital artifacts and immersive experiences crafted for the next generation.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project 1 -->
+                <div class="project-card reveal group rounded-2xl p-4">
+                    <div class="overflow-hidden rounded-xl h-64">
+                        <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=1000" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-yellow-400 text-[10px] font-bold uppercase tracking-widest">Web3 Architecture</span>
+                        <h3 class="text-xl font-sync mt-2">Cyber Reality</h3>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="project-card reveal group rounded-2xl p-4">
+                    <div class="overflow-hidden rounded-xl h-64">
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-yellow-400 text-[10px] font-bold uppercase tracking-widest">Abstract CGI</span>
+                        <h3 class="text-xl font-sync mt-2">Liquid Forms</h3>
+                    </div>
+                </div>
+
+                <!-- Project 3 (New) -->
+                <div class="project-card reveal group rounded-2xl p-4">
+                    <div class="overflow-hidden rounded-xl h-64">
+                        <img src="https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=1000" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-yellow-400 text-[10px] font-bold uppercase tracking-widest">Space Exploration</span>
+                        <h3 class="text-xl font-sync mt-2">Neo Mars</h3>
+                    </div>
+                </div>
+
+                <!-- Project 4 (New) -->
+                <div class="project-card reveal group rounded-2xl p-4">
+                    <div class="overflow-hidden rounded-xl h-64">
+                        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-yellow-400 text-[10px] font-bold uppercase tracking-widest">Motion Design</span>
+                        <h3 class="text-xl font-sync mt-2">Glitch UI</h3>
+                    </div>
+                </div>
+
+                <!-- Project 5 (New) -->
+                <div class="project-card reveal group rounded-2xl p-4">
+                    <div class="overflow-hidden rounded-xl h-64">
+                        <img src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=1000" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-yellow-400 text-[10px] font-bold uppercase tracking-widest">AI Visualization</span>
+                        <h3 class="text-xl font-sync mt-2">Neural Node</h3>
+                    </div>
+                </div>
+
+                <!-- Project 6 (New) -->
+                <div class="project-card reveal group rounded-2xl p-4">
+                    <div class="overflow-hidden rounded-xl h-64">
+                        <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-yellow-400 text-[10px] font-bold uppercase tracking-widest">Data Art</span>
+                        <h3 class="text-xl font-sync mt-2">Void Sphere</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: TEAM -->
+    <section id="team">
+        <div class="w-full max-w-7xl">
+            <h2 class="reveal text-5xl font-sync mb-20 text-center uppercase">The Collective</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-16">
+                <div class="team-member reveal text-center">
+                    <div class="overflow-hidden rounded-full w-48 h-48 mx-auto border-2 border-yellow-400/30 p-2">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000" class="team-img w-full h-full object-cover rounded-full">
+                    </div>
+                    <h4 class="mt-6 text-xl font-bold font-sync">Alex Rivera</h4>
+                    <p class="text-yellow-400 text-xs uppercase tracking-widest mt-1">Creative Director</p>
+                </div>
+                <div class="team-member reveal text-center">
+                    <div class="overflow-hidden rounded-full w-48 h-48 mx-auto border-2 border-yellow-400/30 p-2">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000" class="team-img w-full h-full object-cover rounded-full">
+                    </div>
+                    <h4 class="mt-6 text-xl font-bold font-sync">Sarah Chen</h4>
+                    <p class="text-yellow-400 text-xs uppercase tracking-widest mt-1">Lead Designer</p>
+                </div>
+                <div class="team-member reveal text-center">
+                    <div class="overflow-hidden rounded-full w-48 h-48 mx-auto border-2 border-yellow-400/30 p-2">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000" class="team-img w-full h-full object-cover rounded-full">
+                    </div>
+                    <h4 class="mt-6 text-xl font-bold font-sync">Marcus Vane</h4>
+                    <p class="text-yellow-400 text-xs uppercase tracking-widest mt-1">Motion Artist</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: CONTACT -->
+    <section id="contact" class="bg-yellow-400 text-black">
+        <div class="w-full max-w-6xl">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="reveal">
+                    <h2 class="text-7xl md:text-9xl font-black font-sync leading-none uppercase">Get <br> In Touch</h2>
+                    <p class="mt-8 text-lg font-medium opacity-80 max-w-md">Let's create something that the world has never seen before.</p>
+                </div>
+                <div class="reveal space-y-8 bg-black/5 p-10 rounded-3xl">
+                    <input type="text" placeholder="Full Name" class="w-full bg-transparent border-b-2 border-black p-4 focus:outline-none placeholder:text-black/40 font-bold uppercase text-sm">
+                    <input type="email" placeholder="Email Address" class="w-full bg-transparent border-b-2 border-black p-4 focus:outline-none placeholder:text-black/40 font-bold uppercase text-sm">
+                    <textarea placeholder="Your Message" class="w-full bg-transparent border-b-2 border-black p-4 focus:outline-none placeholder:text-black/40 font-bold uppercase text-sm h-32"></textarea>
+                    <button class="w-full bg-black text-white py-5 rounded-full font-sync text-xs hover:scale-95 transition-transform duration-300">Send Inquiry</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="p-10 text-center text-[10px] tracking-[0.5em] uppercase text-gray-500 bg-black">
+        © 2024 Studio X • Designed for the Future
+    </footer>
+
+    <script>
+        // --- 1. 3D MOVABLE VERTEX ANIMATION ---
+        const canvas = document.querySelector('#vertex-canvas');
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 400;
+
+        const particleCount = 150;
+        const particlesGeometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const velocities = [];
+
+        for(let i=0; i < particleCount; i++) {
+            positions[i*3] = (Math.random() - 0.5) * 800;
+            positions[i*3+1] = (Math.random() - 0.5) * 800;
+            positions[i*3+2] = (Math.random() - 0.5) * 800;
+            velocities.push({
+                x: (Math.random() - 0.5) * 0.5,
+                y: (Math.random() - 0.5) * 0.5,
+                z: (Math.random() - 0.5) * 0.5
+            });
+        }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({ size: 3, color: 0xfacc15 });
+        const particleSystem = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particleSystem);
+
+        const lineMaterial = new THREE.LineBasicMaterial({ color: 0xfacc15, transparent: true, opacity: 0.2 });
+        let lineMesh;
+
+        let mouseX = 0, mouseY = 0;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - window.innerWidth / 2) * 0.05;
+            mouseY = (e.clientY - window.innerHeight / 2) * 0.05;
+        });
+
+        function animateVertex() {
+            requestAnimationFrame(animateVertex);
+            particleSystem.rotation.y += 0.001;
+            scene.rotation.x += (mouseY * 0.01 - scene.rotation.x) * 0.05;
+            scene.rotation.y += (mouseX * 0.01 - scene.rotation.y) * 0.05;
+
+            const posAttr = particlesGeometry.attributes.position;
+            const linePositions = [];
+
+            for(let i=0; i < particleCount; i++) {
+                posAttr.array[i*3] += velocities[i].x;
+                posAttr.array[i*3+1] += velocities[i].y;
+                posAttr.array[i*3+2] += velocities[i].z;
+
+                if(Math.abs(posAttr.array[i*3]) > 400) velocities[i].x *= -1;
+                if(Math.abs(posAttr.array[i*3+1]) > 400) velocities[i].y *= -1;
+
+                for(let j=i+1; j < particleCount; j++) {
+                    const dx = posAttr.array[i*3] - posAttr.array[j*3];
+                    const dy = posAttr.array[i*3+1] - posAttr.array[j*3+1];
+                    const dz = posAttr.array[i*3+2] - posAttr.array[j*3+2];
+                    const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+                    if(dist < 120) {
+                        linePositions.push(posAttr.array[i*3], posAttr.array[i*3+1], posAttr.array[i*3+2]);
+                        linePositions.push(posAttr.array[j*3], posAttr.array[j*3+1], posAttr.array[j*3+2]);
+                    }
+                }
+            }
+            posAttr.needsUpdate = true;
+            if(lineMesh) scene.remove(lineMesh);
+            const lineGeometry = new THREE.BufferGeometry();
+            lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+            lineMesh = new THREE.LineSegments(lineGeometry, lineMaterial);
+            scene.add(lineMesh);
+            renderer.render(scene, camera);
+        }
+        animateVertex();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- 2. GSAP & CINEMATIC TYPOGRAPHIC ANIMATION ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Custom Cursor
+        const cursor = document.querySelector("#cursor");
+        window.addEventListener("mousemove", (e) => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+        });
+
+        // Text Splitting Logic
+        const linesElements = document.querySelectorAll(".anim-line");
+        linesElements.forEach(line => {
+            const content = line.textContent;
+            line.innerHTML = content.split("").map(char => 
+                `<span class="char">${char === " " ? "&nbsp;" : char}</span>`
+            ).join("");
+        });
+
+        // Cinematic Intro Timeline
+        const mainTl = gsap.timeline();
+
+        mainTl
+        .from(".char", {
+            duration: 2.2,
+            y: 120,
+            z: -400,
+            rotationX: -100,
+            opacity: 0,
+            filter: "blur(25px)",
+            stagger: {
+                amount: 1,
+                from: "center"
+            },
+            ease: "expo.out"
+        })
+        .from(".anim-line", {
+            duration: 2.5,
+            letterSpacing: "1.2em",
+            ease: "expo.out"
+        }, 0)
+        .to(".hero-sub", {
+            duration: 2,
+            opacity: 0.8,
+            y: -20,
+            letterSpacing: "1.2em",
+            ease: "power2.out"
+        }, "-=1.8");
+
+        // Scroll Reveal for sections and cards
+        gsap.utils.toArray(".reveal").forEach((elem) => {
+            gsap.to(elem, {
+                scrollTrigger: {
+                    trigger: elem,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                },
+                opacity: 1,
+                y: 0,
+                duration: 1.2,
+                ease: "power4.out"
+            });
+        });
+
+        // Link Interactions
+        document.querySelectorAll("a, button, .project-card").forEach(el => {
+            el.addEventListener("mouseenter", () => gsap.to(cursor, { scale: 4, backgroundColor: "#fff" }));
+            el.addEventListener("mouseleave", () => gsap.to(cursor, { scale: 1, backgroundColor: "#facc15" }));
+        });
+    </script>
+</body>
+</html>
