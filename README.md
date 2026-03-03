@@ -1,1 +1,2 @@
 # FrameStudio
+Simple Animation Website
